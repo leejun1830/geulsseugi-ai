@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#11152a">
+<title>글쓰기 AI — 평가하고, 피드백 받고, 다시 쓰기</title>
+<style>
+:root{color-scheme:dark;--bg:#0d1020;--panel:#151a30;--line:#303858;--text:#f5f6ff;--muted:#a9b1d0;--purple:#a99bff;--cyan:#79e5e5;--danger:#ff9eaa;--ok:#8fe0bd}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 10% 0%,#27245a 0,transparent 34%),radial-gradient(ellipse at 95% 12%,#123c4c 0,transparent 28%),var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Malgun Gothic",sans-serif;min-height:100vh}
+button,input,textarea,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.wrap{max-width:1450px;margin:auto;padding:26px clamp(14px,3vw,42px) 48px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:38px}.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:-.03em;font-size:19px}.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#a99bff,#71e5df);color:#11152a;font-size:22px;box-shadow:0 7px 28px #8171ff33}.top-pill{border:1px solid #3d4568;background:#191e37;color:#d9ddf8;border-radius:999px;padding:8px 13px;font-size:12px}
+.hero{max-width:850px;margin:0 auto 30px;text-align:center}.eyebrow{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:.16em}.hero h1{font-size:clamp(34px,5.5vw,62px);line-height:1.08;letter-spacing:-.055em;margin:15px 0 18px}.gradient{background:linear-gradient(90deg,#c5baff,#82eeeb);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{max-width:660px;margin:auto;color:var(--muted);font-size:clamp(14px,2vw,17px)}.feature-row{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:23px}.feature{border:1px solid #343c5f;background:#171c34;color:#dbe0ff;border-radius:999px;padding:7px 11px;font-size:12px}
+.workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:17px;align-items:stretch}.panel{min-width:0;background:linear-gradient(180deg,#171c33f5,#12172af5);border:1px solid var(--line);border-radius:22px;padding:clamp(15px,2vw,23px);box-shadow:0 22px 70px #0002}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:17px}.panel-title{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:750}.step{display:grid;place-items:center;width:29px;height:29px;border-radius:10px;background:#28234b;color:#c5baff;font-size:12px;font-weight:850}.small-label{font-size:12px;color:var(--muted)}
+.mode-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}.mode{min-width:0;border:1px solid #343c5b;background:#171c31;color:#b8c0dd;padding:10px 5px;border-radius:12px;font-size:12px;font-weight:700;transition:.18s}.mode span{display:block;font-size:18px;margin-bottom:3px}.mode.active{color:#fff;border-color:#9285ff;background:linear-gradient(135deg,#39315f,#242a4b);box-shadow:inset 0 0 0 1px #a99bff22}
+textarea{display:block;width:100%;resize:vertical;min-height:255px;border:1px solid #343c5b;border-radius:15px;background:#0f1427;color:var(--text);padding:15px;line-height:1.8;font-size:14px;outline:none}textarea::placeholder,input::placeholder{color:#737d9e}textarea:focus,input:focus,select:focus{border-color:#8f82ff;box-shadow:0 0 0 3px #a99bff12}
+.input-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:9px 2px 16px;color:var(--muted);font-size:12px}.text-btn{border:0;background:none;color:#c2b8ff;padding:4px 0;font-size:12px}.options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:7px}.field select,.field input{width:100%;border:1px solid #343c5b;background:#10152a;color:var(--text);border-radius:11px;padding:11px 12px;min-width:0}.extra{margin-top:13px}
+.primary{border:0;width:100%;border-radius:13px;padding:14px 18px;margin-top:17px;color:#11152a;background:linear-gradient(100deg,#b5a9ff,#7be7e1);font-weight:850;box-shadow:0 9px 25px #8c7cff20;transition:transform .15s,filter .15s}.primary:hover{filter:brightness(1.06);transform:translateY(-1px)}.primary:disabled{opacity:.6;cursor:wait;transform:none}.notice{font-size:11px;color:#8791b1;line-height:1.65;margin:12px 2px 0}
+.result-box{min-height:255px;max-height:610px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid #343c5b;border-radius:15px;background:#0f1427;padding:16px;line-height:1.85;font-size:14px;color:#e6e9fb}.result-box.empty{display:flex;align-items:center;justify-content:center;text-align:center;color:#7e88aa;white-space:normal}.empty-inner .spark{font-size:32px;display:block;margin-bottom:9px}.empty-inner strong{display:block;color:#c5cbe4;margin-bottom:5px}.empty-inner p{max-width:240px;font-size:12px;margin:0 auto}.status{min-height:22px;margin:11px 2px 9px;color:var(--muted);font-size:12px}.status.error{color:var(--danger)}.status.success{color:var(--ok)}.progress{height:3px;background:#272e4c;border-radius:9px;overflow:hidden;margin:0 0 10px;display:none}.progress.show{display:block}.progress i{display:block;width:35%;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--purple),var(--cyan));animation:slide 1.3s ease-in-out infinite alternate}@keyframes slide{from{transform:translateX(-5%)}to{transform:translateX(190%)}}
+.result-actions{display:flex;flex-wrap:wrap;gap:8px}.secondary{border:1px solid #3a4262;background:#1a2038;color:#dce1fa;padding:9px 12px;border-radius:10px;font-size:12px}.secondary:hover{background:#252c49}.secondary:disabled{opacity:.4;cursor:not-allowed}.feedback-box{margin-top:13px}.feedback-box textarea{min-height:105px}.hidden{display:none!important}.footer{margin-top:26px;text-align:center;color:#737d9e;font-size:11px;line-height:1.7}.footer strong{color:#aeb7d7}
+@media(max-width:900px){.workspace{grid-template-columns:1fr}.topbar{margin-bottom:30px}.hero{margin-bottom:25px}textarea,.result-box{min-height:230px;max-height:none}}@media(max-width:440px){.topbar{align-items:flex-start}.top-pill{font-size:10px}.mode{font-size:11px}.options{gap:9px}.panel{border-radius:17px}.panel-head{align-items:flex-start}}
+</style>
+</head>
+<body><div class="wrap">
+<header class="topbar"><div class="brand"><div class="logo">✳</div><span>글쓰기 AI</span></div><div class="top-pill">최대 100,000자 · AI 글쓰기 도구</div></header>
+<section class="hero"><div class="eyebrow">WRITE · REVIEW · IMPROVE</div><h1>쓰고, 평가받고,<br><span class="gradient">더 좋은 글로 완성하기.</span></h1><p>긴 글 요약부터 문장 다듬기, 글 평가와 구체적인 피드백, 피드백을 반영한 재작성까지 한곳에서 해보세요.</p><div class="feature-row"><span class="feature">✦ 10만 자 입력</span><span class="feature">◎ 점수와 근거가 있는 평가</span><span class="feature">↻ 피드백 반영 재작성</span></div></section>
+<main class="workspace">
+<section class="panel">
+<div class="panel-head"><div class="panel-title"><span class="step">01</span> 글 입력하기</div><span class="small-label">원문 · 자료</span></div>
+<div class="mode-tabs" role="tablist" aria-label="작업 선택">
+<button class="mode active" data-mode="summarize" role="tab" aria-selected="true"><span>☷</span>핵심 요약</button>
+<button class="mode" data-mode="rewrite" role="tab" aria-selected="false"><span>✎</span>글 다듬기</button>
+<button class="mode" data-mode="write" role="tab" aria-selected="false"><span>✧</span>새 글 작성</button>
+<button class="mode" data-mode="evaluate" role="tab" aria-selected="false"><span>◎</span>글 평가</button>
+<button class="mode" data-mode="revise" role="tab" aria-selected="false"><span>↻</span>피드백 반영</button>
+</div>
+<textarea id="source" maxlength="100000" aria-label="입력할 글" placeholder="요약할 글을 붙여 넣으세요.&#10;&#10;최대 100,000자까지 입력할 수 있습니다."></textarea>
+<div class="input-foot"><span id="count">0 / 100,000자</span><button class="text-btn" id="clear">입력 지우기 ×</button></div>
+<div class="options">
+<div class="field"><label for="style">글의 문체</label><select id="style"><option>쉽고 자연스럽게</option><option>학생이 쓴 것처럼</option><option>정중하고 공식적으로</option><option>전문적이고 논리적으로</option><option>친근하고 재미있게</option></select></div>
+<div class="field"><label for="length">결과 길이</label><select id="length"><option value="짧게">짧게</option><option value="보통" selected>보통</option><option value="자세하게">자세하게</option></select></div>
+</div>
+<div class="field extra" id="extraWrap"><label for="extra">추가 요청 <span style="opacity:.65">(선택)</span></label><input id="extra" placeholder="예: 중요한 개념을 번호로 정리해 줘"></div>
+<div class="field extra hidden" id="feedbackWrap"><label for="feedback">반영할 피드백</label><textarea id="feedback" placeholder="평가 결과에서 받은 피드백을 붙여 넣으세요. 직접 원하는 수정 사항을 적어도 돼요." style="min-height:120px"></textarea></div>
+<button class="primary" id="run">✦　AI로 처리하기</button>
+<p class="notice">긴 글은 여러 부분으로 나눠 처리합니다. 실제 AI 기능에는 서버에 API 키 설정이 필요하며, API 사용료가 발생할 수 있습니다.</p>
+</section>
+<section class="panel">
+<div class="panel-head"><div class="panel-title"><span class="step">02</span> 결과 확인하기</div><span class="small-label" id="resultMeta">AI 결과</span></div>
+<div class="result-box empty" id="result" aria-live="polite"><div class="empty-inner"><span class="spark">✧</span><strong>결과가 이곳에 나타나요</strong><p>글 평가를 선택하면 점수와 개선점을 받고, 피드백 반영을 선택하면 수정된 글을 만들 수 있어요.</p></div></div>
+<div class="progress" id="progress"><i></i></div><div class="status" id="status" role="status">준비 완료 · 글을 입력하면 시작할 수 있어요.</div>
+<div class="result-actions"><button class="secondary" id="copy" disabled>▣ 결과 복사</button><button class="secondary" id="download" disabled>↓ TXT 저장</button><button class="secondary" id="replace" disabled>↶ 결과를 입력으로</button><button class="secondary" id="sendFeedback" disabled>↗ 피드백 반영으로 보내기</button></div>
+</section>
+</main>
+<footer class="footer"><strong>글쓰기 AI</strong> · 글을 평가하고 개선하는 글쓰기 도구<br>AI 평가 점수는 참고용입니다. 과제나 중요한 글은 평가 기준과 사실을 직접 확인하세요.</footer>
+</div>
+<script>
+(() => {
+const MAX=100000, source=document.querySelector('#source'), count=document.querySelector('#count'), result=document.querySelector('#result'), status=document.querySelector('#status'), run=document.querySelector('#run'), progress=document.querySelector('#progress');
+const feedback=document.querySelector('#feedback'), feedbackWrap=document.querySelector('#feedbackWrap'), extraWrap=document.querySelector('#extraWrap');
+const actionButtons=['copy','download','replace','sendFeedback'].map(id=>document.getElementById(id));
+let mode='summarize',lastResult='';
+const placeholders={
+summarize:'요약할 글을 붙여 넣으세요. 핵심 내용과 중요한 정보를 정리합니다.',
+rewrite:'다듬고 싶은 글을 붙여 넣으세요. 원래 의미를 유지하며 더 자연스럽게 바꿉니다.',
+write:'새 글의 바탕이 될 자료, 메모, 핵심 아이디어를 붙여 넣으세요.',
+evaluate:'평가받고 싶은 글을 붙여 넣으세요. 구성, 명확성, 근거, 문법 등을 평가하고 구체적인 개선 피드백을 제공합니다.',
+revise:'피드백을 반영해 고칠 글을 붙여 넣으세요. 아래 피드백 칸에 수정할 점을 적거나 이전 평가 결과를 붙여 넣으세요.'
+};
+function setStatus(message,type=''){status.textContent=message;status.className='status'+(type?' '+type:'');}
+function updateCount(){const n=source.value.length;count.textContent=`${n.toLocaleString('ko-KR')} / ${MAX.toLocaleString('ko-KR')}자`;count.style.color=n>MAX*.95?'#ffbd9d':'';}
+function showResult(text){result.classList.remove('empty');result.textContent=text;lastResult=text;actionButtons.forEach(b=>b.disabled=!text);document.querySelector('#resultMeta').textContent=`${text.length.toLocaleString('ko-KR')}자`;}
+document.querySelectorAll('.mode').forEach(btn=>btn.addEventListener('click',()=>{
+document.querySelectorAll('.mode').forEach(b=>{const active=b===btn;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active));});
+mode=btn.dataset.mode;source.placeholder=placeholders[mode]+'\\n\\n최대 100,000자까지 입력할 수 있습니다.';
+feedbackWrap.classList.toggle('hidden',mode!=='revise');
+extraWrap.classList.toggle('hidden',mode==='revise');
+run.textContent=mode==='evaluate'?'◎　글 평가하고 피드백 받기':mode==='revise'?'↻　피드백 반영해 다시 쓰기':'✦　AI로 처리하기';
+if(mode==='revise'&&!feedback.value.trim())feedback.placeholder='이전 평가에서 받은 피드백을 붙여 넣으세요. 예: 주장이 불분명하니 첫 문단에 핵심 주장을 쓰고, 구체적인 예시를 추가해 줘.';
+}));
+source.addEventListener('input',updateCount);
+document.querySelector('#clear').addEventListener('click',()=>{source.value='';updateCount();source.focus();setStatus('입력 내용을 지웠어요.');});
+run.addEventListener('click',async()=>{
+const text=source.value.trim();if(!text){setStatus('먼저 글을 입력해 주세요.','error');source.focus();return;}
+if(text.length>MAX){setStatus('글은 최대 100,000자까지 입력할 수 있어요.','error');return;}
+if(mode==='revise'&&!feedback.value.trim()&&!document.querySelector('#extra').value.trim()){setStatus('반영할 피드백을 입력해 주세요.','error');feedback.focus();return;}
+run.disabled=true;run.textContent='처리 중...';progress.classList.add('show');setStatus(mode==='evaluate'?'글의 강점과 개선점을 분석하고 있어요.':mode==='revise'?'피드백을 반영해 글을 다시 쓰고 있어요.':'AI가 글을 분석하고 있어요. 글이 길면 조금 더 걸릴 수 있어요.');
+try{
+const res=await fetch('/api/process',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text,mode,style:document.querySelector('#style').value,length:document.querySelector('#length').value,extra:document.querySelector('#extra').value,feedback:feedback.value})});
+const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||`요청 실패 (${res.status})`);if(!data.result)throw new Error('AI가 빈 결과를 반환했어요. 다시 시도해 주세요.');
+showResult(data.result);setStatus(mode==='evaluate'?'평가 완료! 점수와 개선 피드백을 확인하세요.':mode==='revise'?'재작성 완료! 피드백이 반영됐는지 확인해 보세요.':`완료! 입력한 ${Number(data.characters||text.length).toLocaleString('ko-KR')}자를 처리했어요.`,'success');
+}catch(err){setStatus(err.message||'연결에 실패했어요. 설정과 인터넷 연결을 확인해 주세요.','error');}
+finally{run.disabled=false;run.textContent=mode==='evaluate'?'◎　글 평가하고 피드백 받기':mode==='revise'?'↻　피드백 반영해 다시 쓰기':'✦　AI로 처리하기';progress.classList.remove('show');}
+});
+document.querySelector('#copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(lastResult);setStatus('결과를 복사했어요.','success');}catch{setStatus('자동 복사가 안 돼요. 결과를 직접 선택해 복사해 주세요.','error');}});
+document.querySelector('#download').addEventListener('click',()=>{const blob=new Blob(['\ufeff',lastResult],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='글쓰기AI_결과.txt';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);setStatus('TXT 파일 저장을 시작했어요.','success');});
+document.querySelector('#replace').addEventListener('click',()=>{source.value=lastResult.slice(0,MAX);updateCount();source.focus();setStatus('결과를 입력 칸으로 옮겼어요.','success');});
+document.querySelector('#sendFeedback').addEventListener('click',()=>{feedback.value=lastResult;document.querySelector('[data-mode="revise"]').click();setStatus('결과를 피드백 칸으로 보냈어요. 이제 글을 입력하고 수정 지시를 확인해 주세요.','success');});
+})();
+</script></body></html>
